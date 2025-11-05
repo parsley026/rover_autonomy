@@ -1,5 +1,7 @@
 FROM wisniax/ros-rover-base:autonomy-latest
 
+USER root
+
 # Dockerfile for ROS-JAZZY
 ARG USERNAME='rex'
 ARG PASSWORD='changeme'
@@ -46,7 +48,7 @@ RUN git config --global --add safe.directory /home/rex/raptor_ws/src/rex_interfa
 # RUN git config --global --add safe.directory /home/rex/raptor_ws/src/libVescCan
 
 # Look for submodules
-RUN git submodule update --init --recursive
+RUN git submodule update --init --recursive || true
 
 # Build the workspace
 RUN bash -c "source /opt/ros/jazzy/setup.bash && colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --event-handlers console_start_end+ console_direct+ --executor parallel"
