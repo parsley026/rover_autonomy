@@ -1,0 +1,35 @@
+services:
+  ros-autonomy:
+    build:
+      context: .
+      dockerfile: ./.devcontainer/Dockerfile
+      args:
+        SSH_PORT: 2922
+    image: ros-autonomy
+    container_name: ros-autonomy
+    hostname: ros-autonomy
+    stdin_open: true
+    tty: true
+    pid: "host"
+    ipc: "host"
+    init: true
+    network_mode: host
+    environment:
+      - TZ=Europe/Warsaw
+      - ROS_ENABLE_AUTOSTART=0
+      - ROS_BUILD_ON_STARTUP=on-failure
+    volumes:
+      - type: bind
+        source: ./
+        target: /mnt/local
+        bind:
+          create_host_path: true
+      - type: bind
+        source: ./.devcontainer/rex
+        target: /etc/init.d/rex
+        bind:
+          create_host_path: true
+      - type: bind
+        source: /dev/shm
+        target: /dev/shm
+    restart: unless-stopped
