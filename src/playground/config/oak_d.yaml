@@ -1,0 +1,54 @@
+/**:
+  ros__parameters:
+    camera:
+      i_usb_port_id: "3.1"
+      i_mx_id: "18443010C11C3F0E00"
+
+      i_pipeline_type: RGB
+
+      imu_from_descr: true
+
+    pipeline_gen:
+      i_enable_imu: true
+
+    imu:
+      i_message_type: IMU
+      i_acc_freq: 400
+      i_gyro_freq: 400
+      i_sync_method: LINEAR_INTERPOLATE_ACCEL
+
+    rgb:
+      i_fps: 15.0
+      i_resolution: 720P
+
+      i_low_bandwidth: true
+      i_low_bandwidth_frame_freq: 60
+      i_low_bandwidth_quality: 50
+
+      i_publish_compressed: false
+      i_board_socket_id: 0
+    
+    left:
+      i_synced: true
+
+    right:
+      i_synced: true
+    
+    stereo:
+      i_fps: 15.0
+      i_resolution: 720P
+
+      i_low_bandwidth: true
+      i_low_bandwidth_frame_freq: 60
+      i_low_bandwidth_quality: 50
+      
+      i_publish_compressed: false
+      i_board_socket_id: 0
+
+      i_align_depth: true
+
+      i_enable_distortion_correction: true
+      i_subpixel: true
+      i_lr_check: true
+      i_depth_preset: HIGH_DENSITY
+      i_publish_topic: true
