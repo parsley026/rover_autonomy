@@ -1,13 +1,13 @@
 /**:
   ros__parameters:
     camera:
-      i_usb_port_id: "1.1"
-      i_mx_id: "18443010C11C3F0E00"
+      i_ip: "192.168.1.24"
+      i_mx_id: "194430102150AE2F00"
 
-      i_enable_ir: false
-      i_laser_dot_brightness: 0
+      i_enable_ir: true
+      i_laser_dot_brightness: 800
 
-      i_pipeline_type: RGBD
+      i_pipeline_type: Stereo
 
       imu_from_descr: true
       i_enable_sync: true
@@ -15,7 +15,6 @@
     pipeline_gen:
       i_enable_imu: true
       i_enable_sync: true
-      
       i_enable_diagnostics: false
 
     imu:
@@ -26,41 +25,30 @@
 
     rgb:
       i_fps: 30.0
-      i_resolution: 1080p
-
+      i_resolution: 720P
+      
       i_synced: true
-
-      i_get_base_device_timestamp: false
+      i_get_base_device_timestamp: false 
+      
+      i_low_bandwidth: true
+      i_low_bandwidth_quality: 50
+      
+      i_publish_compressed: true 
+      i_board_socket_id: 0
+      
       i_max_q_size: 30
+      i_enable_lazy_publisher: true
 
-      i_low_bandwidth: false
-      # i_low_bandwidth_frame_freq: 30
-      # i_low_bandwidth_quality: 50
-
-      # i_publish_compressed: false
-      # i_board_socket_id: 0
-
-      i_publish_topic: true
-    
     left:
       i_fps: 30.0
       i_resolution: 720P
-      
+
       i_synced: true
 
-      i_get_base_device_timestamp: false 
+      i_get_base_device_timestamp: false
       i_max_q_size: 30
-
+      
     right:
-      i_fps: 30.0
-      i_resolution: 720P
-      
-      i_synced: true
-
-      i_get_base_device_timestamp: false 
-      i_max_q_size: 30
-    
-    stereo:
       i_fps: 30.0
       i_resolution: 720P
 
@@ -69,19 +57,28 @@
       i_get_base_device_timestamp: false
       i_max_q_size: 30
 
-      i_low_bandwidth: false
-      # i_low_bandwidth_frame_freq: 30
-      # i_low_bandwidth_quality: 50
+    stereo:
+      i_fps: 30.0
+      i_resolution: 720P
       
-      # i_publish_compressed: false
-      # i_board_socket_id: 0
+      i_synced: true
 
+      i_get_base_device_timestamp: false
+      i_max_q_size: 30
+      
+      i_low_bandwidth: true
+      i_low_bandwidth_quality: 50
+
+      i_publish_compressed: true 
+      i_board_socket_id: 0
+      
       i_enable_distortion_correction: true
       i_subpixel: false
 
       i_align_depth: true
 
-      i_lr_check: false
+      i_lr_check: true
 
       i_depth_preset: HIGH_ACCURACY
       i_publish_topic: true
+      
