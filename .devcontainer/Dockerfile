@@ -13,9 +13,9 @@ ENV ROS_BUILD_ON_STARTUP=on-failure
 
 ### If really needed add only unmet pkg deps here
 ### Add required ros packages here
-# RUN DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
-#     pkg1 pkg2 pkg3
-
+RUN DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
+    ros-jazzy-image-transport ros-jazzy-image-transport-plugins
+    
 # Create user
 # RUN useradd -m -s /bin/bash -g 1000 ${USERNAME}
 # RUN echo "${USERNAME}:${PASSWORD}" | chpasswd
