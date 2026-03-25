@@ -71,3 +71,5 @@ CATKIN_IGNORE
 
 # Temporary rex can bridge file
 .can_bridge_rex_waiting
+
+frames_*
