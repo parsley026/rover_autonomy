@@ -14,4 +14,10 @@ ros2 launch playground playground.launch.py xacro_file:=/home/rex/raptor_ws/src/
 
 ros2 launch playground custom_camera.launch.py      params_file:=/home/rex/raptor_ws/src/config/oak_d_pro_w.yaml
 
+docker exec -it 9c83625963a5 /bin/bash
 
+source /opt/ros/jazzy/setup.bash
+
+source install/setup.bash 
+
+ ros2 launch playground playground_def.launch.py 

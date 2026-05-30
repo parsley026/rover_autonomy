@@ -1,8 +1,8 @@
 /**:
   ros__parameters:
     camera:
-      i_usb_port_id: "1.1"
-      i_mx_id: "18443010C11C3F0E00"
+      i_usb_port_id: "1.4"
+      # i_mx_id: "18443010C11C3F0E00"
 
       i_enable_ir: false
       i_laser_dot_brightness: 0

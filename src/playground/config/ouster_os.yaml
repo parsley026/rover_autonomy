@@ -1,7 +1,7 @@
 /**:
   ros__parameters:
     sensor_hostname: '192.168.1.22'
-    udp_dest: ''
+    udp_dest: '192.168.1.20'
     mtp_dest: ''
     mtp_main: false
     
@@ -19,7 +19,7 @@
     lidar_frame: lidar
     
     imu_port: 7503
-    udp_profile_imu: 'RNG19_RFL8_SIG16_NIR16'
+    udp_profile_imu: 'LEGACY'
     imu_frame: imu
     
     point_cloud_frame: points

@@ -198,11 +198,12 @@ lidar_00_odom_parameters = {
     'approx_sync_max_interval': 0.01,
 
     'publish_null_when_lost': False,
-    'Odom/ResetCountdown': '1',
+    
+    'subscribe_scan_cloud':True,
 
     'wait_imu_to_init': False,
 
-    "queue_size_odom": "100",
+    "queue_size_odom": "200",
 
     "Icp/MaxTranslation": "5",
     "ground_normals_up": "true",
@@ -216,17 +217,21 @@ lidar_00_odom_parameters = {
 }
 
 lidar_00_odom_remappings = [
-    ("scan_cloud", lidar_00_namespace + "/points"),
+    ("scan_cloud", "/lidar_00/points"),
+    ("odom", "/lidar_00/odom"),
 ]
 
-robot_localization_params_file = '/home/rex/raptor_ws/src/playground/config/efk_filter.yaml'
+robot_localization_params_file_efk = '/home/rex/raptor_ws/src/playground/config/efk_filter.yaml'
+
+robot_localization_params_file_ufk = '/home/rex/raptor_ws/src/playground/config/efk_filter.yaml'
+
 
 slam_parameters = {
     'use_sim_time': False,
     'subscribe_depth': False,
     'subscribe_rgb': False,
     'subscribe_rgbd': True,          
-    'rgbd_cameras': 2,               
+    # 'rgbd_cameras': 2,               
     'subscribe_scan_cloud': True,    
     
     'frame_id': 'base-link',
@@ -235,36 +240,102 @@ slam_parameters = {
     'publish_tf': True,              
     'wait_for_transform': 0.2,       
 
-    'Mem/IncrementalMemory': 'true', 
-    'Mem/InitWMWithAllNodes': 'false', 
-    'RGBD/OptimizeFromGraphEnd': 'false', 
+    'map_always_update': True,
 
-    'RGBD/AngularUpdate': '0.05',    
-    'RGBD/LinearUpdate': '0.05',     
 
-    'RGBD/ProximityBySpace': 'true',     
-    'Reg/Strategy': '2',                 
-    'Reg/Force3DoF': 'false',            
-    'RGBD/NeighborLinkRefining': 'true', 
+    'Rtabmap/DetectionRate': '10',
+    'Rtabmap/TimeThr': '0',
 
-    'Icp/PointToPlane': 'true',          
-    'Icp/VoxelSize': '0.2',              
-    'Icp/MaxCorrespondenceDistance': '1.0', 
+    # 'Mem/IncrementalMemory': 'true', 
+    # 'Mem/InitWMWithAllNodes': 'false', 
+    # 'RGBD/OptimizeFromGraphEnd': 'false', 
 
-    'RGBD/CreateOccupancyGrid': 'true',  
-    'Grid/FromDepth': 'false',           
-    'Grid/Sensor': '0',                  
-    'Grid/3D': 'false',                  
-    'Grid/RangeMax': '20.0',             
-    'Grid/CellSize': '0.05',             
-    'Grid/RayTracing': 'true',           
+    # 'RGBD/AngularUpdate': '0.05',    
+    # 'RGBD/LinearUpdate': '0.05',     
+
+    # 'RGBD/ProximityBySpace': 'true',     
+    # 'Reg/Strategy': '2',                 
+    # 'Reg/Force3DoF': 'false',            
+    # 'RGBD/NeighborLinkRefining': 'true', 
+
+    # 'Icp/PointToPlane': 'true',          
+    # 'Icp/VoxelSize': '0.2',              
+    # 'Icp/MaxCorrespondenceDistance': '1.0', 
+
+    # 'RGBD/CreateOccupancyGrid': 'true',  
+    # 'Grid/FromDepth': 'false',           
+    # 'Grid/Sensor': '2',                  
+    # 'Grid/3D': 'false',                  
+    # 'Grid/RangeMax': '20.0',             
+    # 'Grid/CellSize': '0.05',             
+    # 'Grid/RayTracing': 'true',           
+
+    #rtabmap
+        'Rtabmap/DetectionRate': '10',
+        'Rtabmap/TimeThr': '0',
+
+        #mem
+        'Mem/STMSize': '20',
+        'Mem/IncrementalMemory': 'True',
+        'Mem/InitWMWithAllNodes': 'False',
+
+        #kp
+        'Kp/MaxFeatures': '750',
+
+        #rgbd
+        'RGBD/NeighborLinkRefining': 'True',
+
+        #reg
+        'Reg/Strategy': '2',
+        'Reg/Force3DoF': 'false',
+
+        #vis
+        
+        #icp
+
+        #stereo
+        'Sterero/WinWidth': '15',
+        'Sterero/WinHeight': '3',
+
+        'Sterero/Iterations': '30',
+
+        'Sterero/DenseStrategy': '0',
+
+        #grid
+        'Grid/Sensor': '2',
+
+        'Grid/3D': 'True',
+
+        'Grid/DepthDecimation': '4',
+
+        'Grid/RangeMin': '0.5',
+        'Grid/RangeMax': '5',
+
+        'Grid/FootprintLength': '1.5',
+        'Grid/FootprintWidth': '1.5',
+        'Grid/FootprintHeight': '1.5',
+        
+        'Grid/MaxObstacleHeight': '0.2',
+
+        'Grid/MinGroundHeight': '0.0',
+        'Grid/MaxGroundHeight': '0.1',
+        
+        'Grid/MaxGroundAngle': '35',
+
+        'Grid/FlatObstacleDetected': 'True',
+
+        'Grid/FilteringRadious': '0.10',
+        'Grid/NoiseFilteringMinNeighbor': '4',
+    
+        #global grid
+
+        'GridGlobal/FootprintRadius': '0.75',
 }
 
 slam_remappings = [
-    ("rgbd_image0", camera_00_namespace + "/rgbd_image"), 
-    ("rgbd_image1", camera_01_namespace + "/rgbd_image"), 
-    ("scan_cloud",  lidar_00_namespace  + "/points"),       
-    ("odom",        "/odometry/filtered")                   
+    ("rgbd_image", f"/{camera_00_namespace}/rgbd_image"),
+    ("scan_cloud", f"/{lidar_00_namespace}/points"),
+    ("odom", "/odometry/filtered")
 ]
 
 def launch_setup(context, *args, **kwargs):
@@ -384,16 +455,16 @@ def launch_setup(context, *args, **kwargs):
             remappings=camera_01_sync_remappings,
             condition=IfCondition(enable_camera_01)
         ),
-        Node(
-            package='rtabmap_odom',
-            executable='rgbd_odometry',
-            name='rtabmap_odom',
-            namespace=camera_01_namespace,
-            parameters=[camera_01_odom_parameters],
-            remappings=camera_01_odom_remappings,
-            arguments=['--ros-args', '--log-level', 'fatal'],
-            condition=IfCondition(enable_camera_01)
-        ),
+        # Node(
+        #     package='rtabmap_odom',
+        #     executable='rgbd_odometry',
+        #     name='rtabmap_odom',
+        #     namespace=camera_01_namespace,
+        #     parameters=[camera_01_odom_parameters],
+        #     remappings=camera_01_odom_remappings,
+        #     arguments=['--ros-args', '--log-level', 'fatal'],
+        #     condition=IfCondition(enable_camera_01)
+        # ),
     ]
 
     lidar_00_nodes = [
@@ -423,13 +494,21 @@ def launch_setup(context, *args, **kwargs):
     ]
 
     nodes = [
+        Node(
+            package='robot_localization',
+            executable='ekf_node',
+            name='ekf_filter_node',
+            namespace='',
+            output='screen',
+            parameters=[robot_localization_params_file_efk]
+        ),
         # Node(
         #     package='robot_localization',
-        #     executable='ekf_node',
-        #     name='ekf_filter_node',
+        #     executable='ukf_node',
+        #     name='ukf_filter_node',
         #     namespace='',
         #     output='screen',
-        #     parameters=[robot_localization_params_file]
+        #     parameters=[robot_localization_params_file_ufk]
         # ),
         # Node(
         #     package='rtabmap_slam', 

@@ -3,27 +3,36 @@
 
   <link name="base-link"/>
 
+  <link name="mount-link"/>
+  <joint name="mount-link-joint" type="revolute">
+    <parent link="base-link"/>
+    <child link="mount-link"/>
+    <origin xyz="-0.27 0.0 0.0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="5" velocity="1.0" lower="-3.14" upper="3.14"/>
+  </joint>
+
   <link name="sensor-mount-00-link"/>
   <joint name="sensor-mount-00-joint" type="revolute">
-    <parent link="base-link"/>
+    <parent link="mount-link"/>
     <child link="sensor-mount-00-link"/>
-    <origin xyz="-0.12 0.0 0.22" rpy="0 0 0"/>
+    <origin xyz="-0.12 0.0 0.22" rpy="0 0 3.14159265359"/>
     <axis xyz="0 0 1"/>
     <limit effort="5" velocity="1.0" lower="-3.14" upper="3.14"/>
   </joint>
 
   <link name="sensor-mount-01-link"/>
   <joint name="sensor-mount-01-joint" type="revolute">
-    <parent link="base-link"/>
+    <parent link="mount-link"/>
     <child link="sensor-mount-01-link"/>
-    <origin xyz="-0.12 0.0 0.12" rpy="0 0 0"/>
+    <origin xyz="-0.12 0.0 0.12" rpy="0 0 3.14159265359"/>
     <axis xyz="0 0 1"/>
     <limit effort="5" velocity="1.0" lower="-3.14" upper="3.14"/>
   </joint>
 
   <link name="sensor-mount-02-link"/>
   <joint name="sensor-mount-02-joint" type="revolute">
-    <parent link="base-link"/>
+    <parent link="mount-link"/>
     <child link="sensor-mount-02-link"/>
     <origin xyz="-0.05 0.0 0.3" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
@@ -53,7 +62,7 @@
 
   <!-- <link name="sensor-mount-03-link"/>
   <joint name="sensor-mount-03-joint" type="revolute">
-    <parent link="base-link"/>
+    <parent link="mount-link"/>
     <child link="sensor-mount-03-link"/>
     <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
     <axis xyz="0 0 1"/>
