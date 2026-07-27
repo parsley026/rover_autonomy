@@ -12,15 +12,15 @@
     ptp_utc_tai_offset: -37.0
     metadata: ''
 
-    sensor_frame: ouster-os-link
+    sensor_frame: lidar_00_link
     
     lidar_port: 7502
     udp_profile_lidar: 'RNG19_RFL8_SIG16_NIR16'
-    lidar_frame: lidar
+    lidar_frame: lidar_00_lidar_frame
     
     imu_port: 7503
     udp_profile_imu: 'LEGACY'
-    imu_frame: imu
+    imu_frame: lidar_00_imu_frame
     
     point_cloud_frame: points
     

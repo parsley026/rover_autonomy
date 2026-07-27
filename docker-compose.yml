@@ -15,14 +15,27 @@ services:
     init: true
     network_mode: host
     privileged: true
+    
+    # --- Hardware Passthrough ---
     devices:
+      - /dev/kfd:/dev/kfd              # AMD ROCm Compute
+      - /dev/dri:/dev/dri              # AMD Graphics
       - /dev/bus/usb:/dev/bus/usb
-      - /dev:/dev
       - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev:/dev
+      
+    # --- GPU Permissions & Security ---
+    group_add:
+      - video
+      - render
+    security_opt:
+      - seccomp:unconfined
+
     environment:
       - TZ=Europe/Warsaw
       - ROS_ENABLE_AUTOSTART=0
       - ROS_BUILD_ON_STARTUP=on-failure
+      
     volumes:
       - type: bind
         source: ./
@@ -37,9 +50,7 @@ services:
       - type: bind
         source: /dev/shm
         target: /dev/shm
-        
       - ./src:/home/rex/raptor_ws/src
-
-      - /dev:/dev
       - /run/udev:/run/udev:ro
+      
     restart: unless-stopped

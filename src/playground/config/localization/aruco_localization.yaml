@@ -1,0 +1,77 @@
+aruco_localization_node:
+  ros__parameters:
+    # ----------------------------------------------------------
+    # Landmark database (resolved at launch from package share)
+    # Override via launch argument aruco_landmarks
+    # ----------------------------------------------------------
+    landmarks_file: ""   # filled by launch file
+
+    # ----------------------------------------------------------
+    # TF frame IDs
+    # camera_frame: optical frame of the detection camera
+    #   OAK-D via depthai:  camera_00_rgb_camera_optical_frame
+    #   RealSense:          camera_00_color_optical_frame
+    # Adjust to match your URDF / driver output.
+    # ----------------------------------------------------------
+    camera_frame: "camera_00_rgb_camera_optical_frame"
+    base_frame:   "base_link"
+    map_frame:    "map"
+
+    # ----------------------------------------------------------
+    # Quality filtering  (tune outdoors)
+    # Detections failing ANY gate are dropped before PnP.
+    # ----------------------------------------------------------
+    min_confidence: 0.65              # distance-based score threshold
+    max_detection_distance_m: 10.0   # reject markers beyond this
+    max_reprojection_error_px: 3.0   # PnP result threshold; if exceeded,
+                                     # the entire solve is rejected
+
+    # Outlier rejection: reject if the computed correction differs from the
+    # last accepted pose by more than these thresholds.
+    # Use /aruco/reset_localization service to clear after repositioning.
+    max_pose_jump_m: 2.0             # metres
+    max_pose_jump_yaw_rad: 0.52      # ~30 degrees
+
+    # ----------------------------------------------------------
+    # Multi-marker PnP (primary strategy)
+    # ----------------------------------------------------------
+    # When true: collect pixel corners from ALL visible good markers and
+    # feed them into ONE solvePnP call.  This eliminates pose ambiguity
+    # ("flip") and produces a single stable, Gaussian measurement for EKF.
+    # When false (or only 1 marker visible): falls back to single-marker PnP.
+    use_multi_marker_pnp: true
+
+    # RANSAC outlier rejection on individual corner points.
+    # Recommended: true.  Automatically discards any single marker whose
+    # corner detections are inconsistent with the consensus pose.
+    use_ransac: true
+    ransac_reprojection_threshold: 3.0   # pixel inlier threshold for RANSAC
+    ransac_min_inlier_ratio: 0.6         # reject solve if < 60% points are inliers
+
+    # OpenCV PnP algorithm.  Options:
+    #   SOLVEPNP_ITERATIVE — classic Levenberg-Marquardt refinement (default)
+    #   SOLVEPNP_SQPNP    — most accurate, slower (recommended for competition)
+    #   SOLVEPNP_EPNP     — fast, good with many points
+    #   SOLVEPNP_AP3P     — fastest, minimum 3 points
+    pnp_flags: "SOLVEPNP_ITERATIVE"
+
+    # ----------------------------------------------------------
+    # Distance-scaled covariance model
+    # With n visible markers, variance is divided by n (more markers = more trust).
+    # Variance_xy  = (cov_scale_xy  * mean_distance / sqrt(n))² + cov_fixed_xy
+    # Variance_yaw = (cov_scale_yaw * mean_distance / sqrt(n))² + cov_fixed_yaw
+    # ----------------------------------------------------------
+    cov_scale_xy:  0.015   # 1.5 cm/m  → at 5 m, 1 marker: σ_xy ≈ 7.5 cm
+    cov_scale_yaw: 0.005   # ~0.3°/m   → at 5 m, 1 marker: σ_yaw ≈ 1.5°
+    cov_fixed_xy:  0.0001  # minimum xy variance floor  (m²)
+    cov_fixed_yaw: 0.0001  # minimum yaw variance floor (rad²)
+
+    # ----------------------------------------------------------
+    # Publisher settings
+    # ----------------------------------------------------------
+    queue_size: 5
+    status_publish_rate_hz: 5.0      # /aruco/status published even when no marker
+
+    # Publish map→base_link TF directly (bypass EKF).
+    # Leave false when using robot_localization — the EKF handles the TF.
+    publish_tf: false
