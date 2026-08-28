@@ -1,4 +1,4 @@
-FROM wisniax/ros-rover-base:autonomy-latest
+FROM wisniax/ros-rover-base:autonomy-rocm-latest
 
 USER root
 
@@ -14,7 +14,7 @@ ENV ROS_BUILD_ON_STARTUP=on-failure
 ### If really needed add only unmet pkg deps here
 ### Add required ros packages here
 RUN DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
-    ros-jazzy-image-transport ros-jazzy-image-transport-plugins
+    ros-jazzy-image-transport ros-jazzy-image-transport-plugins ros-jazzy-rmw-cyclonedds-cpp
     
 # Create user
 # RUN useradd -m -s /bin/bash -g 1000 ${USERNAME}
