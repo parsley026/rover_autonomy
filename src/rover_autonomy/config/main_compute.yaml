@@ -18,7 +18,7 @@ main_compute:
     
     launch_localization: true
 
-    launch_mapping: false
+    launch_mapping: true
     launch_local_topography: false
     launch_global_topography: false
     launch_navigation: false

@@ -19,11 +19,11 @@
 
     Odom/ResetCountdown: "1"
     
-    Icp/MaxTranslation: "5.0"
-    Icp/VoxelSize: "0.1"
-    Icp/MaxCorrespondenceDistance: "1.0" 
-    Icp/Iterations: "15"
-    Icp/PointToPlaneK: "10" 
+    Icp/PointToPlane: "false" 
+    Icp/PointToPlaneK: "0"
+    Icp/VoxelSize: "0.05"
+    Icp/MaxCorrespondenceDistance: "0.3"
+    Icp/Iterations: "20"
     
-    Odom/Strategy: "0"
-    ground_normals_up: true
+    # Odom/Strategy: "0"
+    # ground_normals_up: true

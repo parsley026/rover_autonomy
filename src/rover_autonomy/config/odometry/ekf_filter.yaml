@@ -1,7 +1,7 @@
 /**:
   ros__parameters:
     use_sim_time: false
-    frequency: 30.0
+    frequency: 15.0
     sensor_timeout: 0.5
     two_d_mode: false               
     publish_tf: true               
@@ -11,18 +11,31 @@
     base_link_frame: base_link  
     world_frame: odom
 
-    # --- SENSOR 1: LiDAR (Must start at odom0) ---
-    odom0: /lidar_00/odom           
-    odom0_config: [true,  true,  true,
-                   true,  true,  true,
-                   false, false, false,
-                   false, false, false,
-                   false, false, false]
-    odom0_queue_size: 10
-    odom0_differential: false
-    odom0_relative: true
+# # --- SENSOR 1: LiDAR Odometry (The Sole Position/Orientation Anchor) ---
+#     odom0: /lidar_00/odom           
+#     odom0_config: [true,  true,  true,  
+#                    true,  true,  true,  
+#                    false, false, false,
+#                    false, false, false,
+#                    false, false, false]
+#     odom0_queue_size: 10
+#     odom0_differential: false
+#     odom0_relative: true
 
-    # --- SENSOR 2: Camera RGB-D ---
+# # --- SENSOR 2: LiDAR IMU (Pure Gyro Support) ---
+#     imu0: /lidar_00/imu
+#     imu0_config: [false, false, false,
+#                   false, false, false,
+#                   false, false, false,
+#                   true,  true,  true,   # Angular velocity only
+#                   false, false, false]
+#     imu0_queue_size: 50
+#     imu0_differential: false
+#     imu0_relative: false
+#     imu0_remove_gravitational_acceleration: true
+
+
+    # --- SENSOR 2: Camera RGB-D Odometry ---
     odom1: /camera_00/odom
     odom1_config: [true,  true,  true,
                    true,  true,  true,
@@ -31,4 +44,4 @@
                    false, false, false]
     odom1_queue_size: 10
     odom1_differential: false       
-    odom1_relative: true
+    odom1_relative: true  

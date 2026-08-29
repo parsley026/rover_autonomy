@@ -50,7 +50,7 @@ def launch_setup(context, *args, **kwargs):
     slam_remappings = [
         ("rgbd_image", "/camera_00/rgbd_image"),
         ("scan_cloud", "/lidar_00/points"),
-        ("odom", "//odom")
+        ("odom", "/localization/odometry/filtered")
     ]
 
     return [
