@@ -1,22 +1,25 @@
 main_compute:
   ros__parameters:
     # -- mode
-    use_sim_time: true
+    use_sim_time: false
 
     # -- 
-    launch_description: false
+    launch_description: true
+    
     launch_camera_00: true
     launch_camera_00_driver: true
     launch_camera_00_decompression: true
     launch_camera_00_post_processing: true
+
     launch_lidar_00: true
-    launch_camera_00_odom: true
-    launch_lidar_00_odom: true
-    launch_localization: true
-    launch_mapping: true
-    launch_local_topography: true
-    launch_global_topography: true
-    launch_navigation: true
+
+    launch_camera_00_odom: false
+    launch_lidar_00_odom: false
+    launch_localization: false
+    launch_mapping: false
+    launch_local_topography: false
+    launch_global_topography: false
+    launch_navigation: false
 
     # -- subsystem config files
     camera_00_config: "config/camera/camera.yaml"
@@ -37,7 +40,7 @@ main_compute:
     camera_parent_frame: "sensor_mount_01_link"
 
     camera_decompress_rgb: true
-    camera_decompress_depth: true
+    camera_decompress_depth: false
 
     # -- lidar subsystem identifiers
     lidar_package:           "rover_autonomy"

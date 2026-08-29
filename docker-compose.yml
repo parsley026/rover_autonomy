@@ -28,9 +28,14 @@ services:
       - TZ=Europe/Warsaw
       - ROS_ENABLE_AUTOSTART=0
       - ROS_BUILD_ON_STARTUP=on-failure
+      
       # - DISPLAY=${DISPLAY}
       - QT_QPA_PLATFORM=xcb
       - QT_X11_NO_MITSHM=1
+
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+      - FASTRTPS_DEFAULT_PROFILES_FILE=/fastdds_shm.xml
+  
       # - XAUTHORITY=/root/.Xauthority
     volumes:
       - type: bind
@@ -52,6 +57,8 @@ services:
       - /dev:/dev
       - /run/udev:/run/udev:ro
 
-      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./fastdds_shm.xml:/fastdds_shm.xml:ro
+      
+      # - /tmp/.X11-unix:/tmp/.X11-unix
       # - ${XAUTHORITY}:/root/.Xauthority:ro
     restart: unless-stopped

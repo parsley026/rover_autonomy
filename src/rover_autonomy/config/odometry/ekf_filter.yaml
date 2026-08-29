@@ -1,6 +1,6 @@
 ekf_filter_node:
   ros__parameters:
-    use_sim_time: true
+    use_sim_time: false
     frequency: 30.0
     sensor_timeout: 0.1
     
@@ -11,19 +11,19 @@ ekf_filter_node:
 
     map_frame: map
     odom_frame: odom
-    base_link_frame: base_link
+    base_link_frame: base_link  
     world_frame: odom
 
     # 1. KINEMATIC ODOMETRY (Wheels from simulated VESC drive controllers)
-    odom0: /kinematics/odom
-    odom0_config: [false, false, false,
-                   false, false, false,
-                   true,  true,  false, # Fusing vx, vy
-                   false, false, true,  # Fusing yaw velocity
-                   false, false, false]
-    odom0_queue_size: 10
-    odom0_differential: false
-    odom0_relative: false
+    # odom0: /kinematics/odom
+    # odom0_config: [false, false, false,
+    #                false, false, false,
+    #                true,  true,  false, # Fusing vx, vy
+    #                false, false, true,  # Fusing yaw velocity
+    #                false, false, false]
+    # odom0_queue_size: 10
+    # odom0_differential: false
+    # odom0_relative: false
 
     # 2. CAMERA 00 ODOMETRY (3D Spatial RGBD Odometry)
     odom1: /camera_00/odom

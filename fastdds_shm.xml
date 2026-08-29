@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<profiles xmlns="http://www.eprosima.com/XMLSchemas/fastRTPS_Profiles">
+    <transport_descriptors>
+        <!-- Define a Shared Memory Transport that allows up to 16 MB messages -->
+        <transport_descriptor>
+            <transport_id>shm_transport</transport_id>
+            <type>SHM</type>
+            <maxMessageSize>16777216</maxMessageSize> 
+            <segment_size>16777216</segment_size>
+        </transport_descriptor>
+    </transport_descriptors>
+
+    <participant profile_name="shm_participant" is_default_profile="true">
+        <rtps>
+            <userTransports>
+                <transport_id>shm_transport</transport_id>
+            </userTransports>
+            <!-- Keep builtin true so it can still talk to external tools via UDP if needed -->
+            <useBuiltinTransports>true</useBuiltinTransports>
+            <builtin>
+                <!-- Allow dynamic memory allocation for large messages -->
+                <readerHistoryMemoryPolicy>PREALLOCATED_WITH_REALLOC</readerHistoryMemoryPolicy>
+                <writerHistoryMemoryPolicy>PREALLOCATED_WITH_REALLOC</writerHistoryMemoryPolicy>
+            </builtin>
+        </rtps>
+    </participant>
+</profiles>
