@@ -2,7 +2,7 @@
   <!-- Launch the Vite dashboard using npm -->
   <executable 
     cmd="npm run dev -- --host" 
-    cwd="/home/raptors/Desktop/rover_simulation_ai/dashboard" 
+    cwd="/home/rex/raptor_ws/autonomy_dashboard" 
     output="screen" 
   />
 </launch>

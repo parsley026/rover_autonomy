@@ -11,6 +11,20 @@ import LocalizationPage from './pages/LocalizationPage';
 import RecoveryPage from './pages/RecoveryPage';
 import './index.css';
 
+function resolveRosbridgeUrl() {
+  const explicitUrl = import.meta.env.VITE_ROSBRIDGE_URL;
+  if (explicitUrl) {
+    return explicitUrl;
+  }
+
+  if (typeof window !== 'undefined') {
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    return `${protocol}//${window.location.hostname}:9090`;
+  }
+
+  return 'ws://localhost:9090';
+}
+
 function DashboardHome() {
   return (
     <main className="main-content">
@@ -22,7 +36,7 @@ function DashboardHome() {
 
 export default function App() {
   return (
-    <RosProvider url="ws://localhost:9090">
+    <RosProvider url={resolveRosbridgeUrl()}>
       <BrowserRouter>
         <div className="app-container">
           <Navbar />

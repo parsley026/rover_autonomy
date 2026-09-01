@@ -73,7 +73,6 @@ function PoseForm({ title, icon: Icon, accentColor, onSubmit, submitLabel, disab
               onChange={(e) => setX(e.target.value)}
               className="nav2-input"
               placeholder="0.0"
-              disabled={disabled}
             />
           </label>
           <label style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
@@ -87,7 +86,6 @@ function PoseForm({ title, icon: Icon, accentColor, onSubmit, submitLabel, disab
               onChange={(e) => setY(e.target.value)}
               className="nav2-input"
               placeholder="0.0"
-              disabled={disabled}
             />
           </label>
         </div>
@@ -107,7 +105,6 @@ function PoseForm({ title, icon: Icon, accentColor, onSubmit, submitLabel, disab
               onChange={(e) => setYaw(e.target.value)}
               className="nav2-input"
               placeholder="0"
-              disabled={disabled}
               style={{ width: '100%' }}
             />
             <span style={{
@@ -126,7 +123,6 @@ function PoseForm({ title, icon: Icon, accentColor, onSubmit, submitLabel, disab
             step="1"
             value={yaw}
             onChange={(e) => setYaw(e.target.value)}
-            disabled={disabled}
             style={{ accentColor, marginTop: '4px' }}
           />
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.72rem', color: 'var(--text-muted)' }}>

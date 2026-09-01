@@ -201,7 +201,7 @@ export default function ChatPanel() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
-          disabled={isBusy || connectionStatus !== 'CONNECTED'}
+          disabled={isBusy}
         />
         <button className="send-button glow-border" onClick={() => handleSend()} disabled={isBusy || connectionStatus !== 'CONNECTED' || !input.trim()}>
           <Send size={16} /> Send
