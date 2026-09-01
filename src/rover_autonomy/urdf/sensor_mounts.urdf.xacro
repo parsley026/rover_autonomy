@@ -1,41 +1,211 @@
 <?xml version="1.0"?>
 <robot name="multi_sensor_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <link name="base_link"/>
+  <!-- =============================== -->
+  <!-- MAIN ROBOT BASE                 -->
+  <!-- =============================== -->
+  
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="0.64 0.52 0.1"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0.1 0.3 0.8 1.0"/>
+      </material>
+    </visual>
+  </link>
 
-  <link name="mount_link"/>
-  <joint name="mount_link_joint" type="fixed">
+  <!-- =============================== -->
+  <!-- FRONT MOUNTING STACK            -->
+  <!-- =============================== -->
+  
+  <link name="robot_base_front_mount">
+    <visual>
+      <geometry>
+        <box size="0.15 0.15 0.02"/>
+      </geometry>
+      <material name="gray">
+        <color rgba="0.5 0.5 0.5 1.0"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="robot_base_front_mount_joint" type="fixed">
     <parent link="base_link"/>
-    <child link="mount_link"/>
-    <origin xyz="-0.27 0.0 0.0" rpy="0 0 0"/>
+    <child link="robot_base_front_mount"/>
+    <origin xyz="0.235 0.0 0.06" rpy="0 0 0"/>
   </joint>
 
-  <link name="sensor_mount_00_link"/>
+
+  <link name="module_base_mount">
+    <visual>
+      <geometry>
+        <box size="0.12 0.15 0.02"/>
+      </geometry>
+      <material name="dark_gray">
+        <color rgba="0.3 0.3 0.3 1.0"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="module_base_mount_joint" type="fixed">
+    <parent link="robot_base_front_mount"/>
+    <child link="module_base_mount"/>
+    <origin xyz="0.015 0.0 0.02" rpy="0 0 0"/>
+  </joint>
+
+
+  <link name="module_base">
+    <visual>
+      <geometry>
+        <box size="0.12 0.15 0.23"/>
+      </geometry>
+      <material name="yellow">
+        <color rgba="0.8 0.6 0.0 0.75"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="module_base_joint" type="fixed">
+    <parent link="module_base_mount"/>
+    <child link="module_base"/>
+    <origin xyz="0.0 0.0 0.125" rpy="0 0 0"/>
+  </joint>
+
+
+  <!-- ======= FRONT SENSORS ======= -->
+  
+  <link name="sensor_mount_00_link">
+    <visual>
+      <geometry>
+        <box size="0.11 0.105 0.01"/>
+      </geometry>
+      <material name="red">
+        <color rgba="1.0 0.0 0.0 1.0"/>
+      </material>
+    </visual>
+  </link>
+  
   <joint name="sensor_mount_00_joint" type="fixed">
-    <parent link="mount_link"/>
+    <parent link="module_base"/>
     <child link="sensor_mount_00_link"/>
-    <origin xyz="-0.12 0.0 0.22" rpy="0 -0.3490659 0"/>
+    <origin xyz="0.0 0.0 0.135" rpy="0 0.2 0"/>
   </joint>
 
-  <link name="sensor_mount_01_link"/>
+
+  <link name="sensor_mount_01_link">
+    <visual>
+      <geometry>
+        <box size="0.02 0.12 0.04"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0.0 1.0 0.0 0.75"/>
+      </material>
+    </visual>
+  </link>
+  
   <joint name="sensor_mount_01_joint" type="fixed">
-    <parent link="mount_link"/>
+    <parent link="module_base"/>
     <child link="sensor_mount_01_link"/>
-    <origin xyz="-0.12 0.0 0.12" rpy="0 0 3.14159265359"/>
+    <origin xyz="0.050 0.0 0.025" rpy="0 0 0"/>
   </joint>
 
-  <!-- <link name="sensor_mount_02_link"/>
-  <joint name="sensor_mount_02_joint" type="fixed">
-    <parent link="mount_link"/>
-    <child link="sensor_mount_02_link"/>
-    <origin xyz="-0.05 0.0 0.3" rpy="0 0 0"/>
-  </joint> -->
 
-  <!-- <link name="sensor_mount_03_link"/>
-  <joint name="sensor_mount_03_joint" type="fixed">
-    <parent link="mount_link"/>
-    <child link="sensor_mount_03_link"/>
+  <!-- =============================== -->
+  <!-- MAST / POLES MOUNTING STACK     -->
+  <!-- =============================== -->
+
+  <!-- ======= POLES ======= -->
+  <link name="pole_left_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.01" length="0.8"/>
+      </geometry>
+      <material name="silver">
+        <color rgba="0.75 0.75 0.75 1.0"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="pole_left_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="pole_left_link"/>
+    <origin xyz="-0.09 0.21 0.45" rpy="0 0 0"/>
+  </joint>
+
+
+  <link name="pole_right_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.01" length="0.8"/>
+      </geometry>
+      <material name="silver">
+        <color rgba="0.75 0.75 0.75 1.0"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="pole_right_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="pole_right_link"/>
+    <origin xyz="-0.09 -0.21 0.45" rpy="0 0 0"/>
+  </joint>
+
+
+  <!-- ======= MAST ATTACHMENTS ======= -->
+  <link name="pole_cross_mount_link">
+    <visual>
+      <geometry>
+        <box size="0.02 0.40 0.20"/>
+      </geometry>
+      <material name="yellow">
+        <color rgba="0.8 0.6 0.0 0.75"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="pole_cross_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="pole_cross_mount_link"/>
+    <origin xyz="-0.09 0.0 0.55" rpy="0 0 0"/>
+  </joint>
+
+
+  <!-- ======= MAST SENSORS ======= -->
+  <link name="sensor_mount_02_link">
+    <visual>
+      <geometry>
+        <box size="0.02 0.12 0.035"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0.0 1.0 0.0 0.75"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="sensor_mount_02_joint" type="fixed">
+    <parent link="pole_cross_mount_link"/>
+    <child link="sensor_mount_02_link"/>
     <origin xyz="0.0 0.0 0.0" rpy="0 0 0"/>
-  </joint> -->
+  </joint>
+
+
+  <link name="cross_center_plate_link">
+    <visual>
+      <geometry>
+        <box size="0.04 0.17 0.035"/>
+      </geometry>
+      <material name="dark_gray">
+        <color rgba="0.3 0.3 0.3 1.0"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="cross_center_plate_joint" type="fixed">
+    <parent link="sensor_mount_02_link"/>
+    <child link="cross_center_plate_link"/>
+    <origin xyz="-0.03 0.0 0.0" rpy="0 0 0"/>
+  </joint>
 
 </robot>

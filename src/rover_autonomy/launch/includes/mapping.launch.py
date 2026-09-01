@@ -45,15 +45,135 @@ def launch_setup(context, *args, **kwargs):
         }
     ]
 
-    slam_arguments = []
+    mapping_mode = str(LaunchConfiguration('mapping_mode').perform(context))
+    camera_00_ns = LaunchConfiguration('camera_00_ns').perform(context)
+    camera_01_ns = LaunchConfiguration('camera_01_ns').perform(context)
+    lidar_ns = LaunchConfiguration('lidar_ns').perform(context)
+    localization_ns = LaunchConfiguration('localization_ns').perform(context)
 
+    mode_params = {}
     slam_remappings = [
-        ("rgbd_image", "/camera_00/rgbd_image"),
-        ("scan_cloud", "/lidar_00/points"),
-        ("odom", "/localization/odometry/filtered")
+        ("odom", f"/{localization_ns}/odometry/filtered"),
     ]
 
-    return [
+    sync_nodes = []
+
+    if mapping_mode == '111':
+        # 111: Full Fusion Mode (LiDAR + Cam0 + Cam1)
+        mode_params = {
+            'subscribe_rgbd': True, 'rgbd_cameras': 0,
+            'subscribe_scan_cloud': True, 'subscribe_depth': False,
+            'Reg/Strategy': '2' # Visual + ICP
+        }
+        slam_remappings.extend([
+            ("rgbd_images", "rgbd_images"),
+            ("scan_cloud", f"/{lidar_ns}/points")
+        ])
+        sync_nodes.append(
+            Node(
+                package='rtabmap_sync',
+                executable='rgbdx_sync',
+                name='rgbdx_sync',
+                namespace=namespace,
+                output='screen',
+                parameters=[{'rgbd_cameras': 2, 'approx_sync': True, 'use_sim_time': use_sim_time}],
+                remappings=[
+                    ('rgbd_image0', f"/{camera_00_ns}/rgbd_image"),
+                    ('rgbd_image1', f"/{camera_01_ns}/rgbd_image"),
+                    ('rgbd_images', 'rgbd_images')
+                ]
+            )
+        )
+    elif mapping_mode == '110':
+        # 110: LiDAR + Cam0 Mode
+        mode_params = {
+            'subscribe_rgbd': True, 'rgbd_cameras': 1,
+            'subscribe_scan_cloud': True, 'subscribe_depth': False,
+            'Reg/Strategy': '2' # Visual + ICP
+        }
+        slam_remappings.extend([
+            ("rgbd_image", f"/{camera_00_ns}/rgbd_image"),
+            ("scan_cloud", f"/{lidar_ns}/points")
+        ])
+    elif mapping_mode == '101':
+        # 101: LiDAR + Cam1 Mode
+        mode_params = {
+            'subscribe_rgbd': True, 'rgbd_cameras': 1,
+            'subscribe_scan_cloud': True, 'subscribe_depth': False,
+            'Reg/Strategy': '2' # Visual + ICP
+        }
+        slam_remappings.extend([
+            ("rgbd_image", f"/{camera_01_ns}/rgbd_image"),
+            ("scan_cloud", f"/{lidar_ns}/points")
+        ])
+    elif mapping_mode == '100':
+        # 100: LiDAR-Only Mode
+        mode_params = {
+            'subscribe_rgbd': False, 'subscribe_depth': False, 'subscribe_stereo': False,
+            'subscribe_scan_cloud': True,
+            'Reg/Strategy': '1', 'Icp/PointToPoint': 'true',
+            'Grid/Sensor': '0'
+        }
+        slam_remappings.extend([
+            ("scan_cloud", f"/{lidar_ns}/points")
+        ])
+    elif mapping_mode in ['011', '11', '9']:
+        # 011: Cam0 + Cam1 Mode (9 is included in case yaml evaluates 011 as octal)
+        mode_params = {
+            'subscribe_rgbd': True, 'rgbd_cameras': 0,
+            'subscribe_scan_cloud': False, 'subscribe_depth': False,
+            'Grid/FromDepth': 'true',
+            'Reg/Strategy': '0', # Visual
+            'Grid/Sensor': '1'
+        }
+        slam_remappings.extend([
+            ("rgbd_images", "rgbd_images")
+        ])
+        sync_nodes.append(
+            Node(
+                package='rtabmap_sync',
+                executable='rgbdx_sync',
+                name='rgbdx_sync',
+                namespace=namespace,
+                output='screen',
+                parameters=[{'rgbd_cameras': 2, 'approx_sync': True, 'use_sim_time': use_sim_time}],
+                remappings=[
+                    ('rgbd_image0', f"/{camera_00_ns}/rgbd_image"),
+                    ('rgbd_image1', f"/{camera_01_ns}/rgbd_image"),
+                    ('rgbd_images', 'rgbd_images')
+                ]
+            )
+        )
+    elif mapping_mode in ['010', '10', '8']:
+        # 010: Cam0-Only Mode
+        mode_params = {
+            'subscribe_rgbd': True, 'rgbd_cameras': 1,
+            'subscribe_scan_cloud': False, 'subscribe_depth': False,
+            'Grid/FromDepth': 'true',
+            'Reg/Strategy': '0', # Visual
+            'Grid/Sensor': '1'
+        }
+        slam_remappings.extend([
+            ("rgbd_image", f"/{camera_00_ns}/rgbd_image")
+        ])
+    elif mapping_mode in ['001', '1']:
+        # 001: Cam1-Only Mode
+        mode_params = {
+            'subscribe_rgbd': True, 'rgbd_cameras': 1,
+            'subscribe_scan_cloud': False, 'subscribe_depth': False,
+            'Grid/FromDepth': 'true',
+            'Reg/Strategy': '0', # Visual
+            'Grid/Sensor': '1'
+        }
+        slam_remappings.extend([
+            ("rgbd_image", f"/{camera_01_ns}/rgbd_image")
+        ])
+
+    rtabmap_parameters.append(mode_params)
+
+    slam_arguments = []
+
+    return sync_nodes + [
         Node(
             package='rtabmap_slam', 
             executable='rtabmap', 
@@ -64,7 +184,6 @@ def launch_setup(context, *args, **kwargs):
             remappings=slam_remappings,
             arguments=slam_arguments
         ),
-        
     ]
 
 def generate_launch_description():
@@ -74,8 +193,13 @@ def generate_launch_description():
     return LaunchDescription([
         DeclareLaunchArgument('params_file', default_value=default_params_file, description=''),
 
-        DeclareLaunchArgument('use_sim_time', default_value='false', description=''),
-        DeclareLaunchArgument('namespace', default_value='mapping', description='Namespace for mapping'),
+        DeclareLaunchArgument('use_sim_time',      default_value='false',        description=''),
+        DeclareLaunchArgument('namespace',          default_value='mapping',      description='Namespace for mapping'),
+        DeclareLaunchArgument('mapping_mode',       default_value='110',          description='SLAM Mode (Binary: LiDAR-Cam0-Cam1, e.g. 110)'),
+        DeclareLaunchArgument('camera_00_ns',  default_value='camera_00',    description='Primary camera sensor namespace'),
+        DeclareLaunchArgument('camera_01_ns',default_value='camera_01',    description='Secondary camera sensor namespace'),
+        DeclareLaunchArgument('lidar_ns',           default_value='lidar_00',     description='Lidar sensor namespace'),
+        DeclareLaunchArgument('localization_ns',    default_value='localization', description='Localization namespace'),
 
         # -- arguments
         DeclareLaunchArgument('mapping_db_folder', default_value='~/.ros/rtabmap'),

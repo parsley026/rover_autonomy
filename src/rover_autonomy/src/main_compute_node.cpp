@@ -78,6 +78,41 @@ MainComputeNode::on_configure(const rclcpp_lifecycle::State &)
     }
   }
 
+  // Warn if Full Fusion mode is active but camera_01 odometry is not launched.
+  // The EKF will subscribe to a dead /camera_01/odom topic and coast on other sensors.
+  int loc_mode = 1;
+  if (has_parameter("localization_mode")) {
+    loc_mode = get_parameter("localization_mode").as_int();
+  }
+  bool cam01_odom_enabled = has_parameter("launch_camera_01_odom") &&
+                            get_parameter("launch_camera_01_odom").as_bool();
+  if (loc_mode == 1 && !cam01_odom_enabled) {
+    RCLCPP_WARN(get_logger(),
+      "localization_mode=1 (Full Fusion) is set but launch_camera_01_odom=false. "
+      "The EKF will subscribe to /camera_01/odom but no publisher will exist. "
+      "Set launch_camera_01_odom: true in main_compute.yaml or switch to a different mode.");
+  }
+
+  navigation_service_ = this->create_service<std_srvs::srv::SetBool>(
+    "~/set_navigation",
+    std::bind(&MainComputeNode::on_set_navigation, this, std::placeholders::_1, std::placeholders::_2)
+  );
+
+  mapping_service_ = this->create_service<std_srvs::srv::SetBool>(
+    "~/set_mapping",
+    std::bind(&MainComputeNode::on_set_mapping, this, std::placeholders::_1, std::placeholders::_2)
+  );
+
+  local_topography_service_ = this->create_service<std_srvs::srv::SetBool>(
+    "~/set_local_topography",
+    std::bind(&MainComputeNode::on_set_local_topography, this, std::placeholders::_1, std::placeholders::_2)
+  );
+
+  global_topography_service_ = this->create_service<std_srvs::srv::SetBool>(
+    "~/set_global_topography",
+    std::bind(&MainComputeNode::on_set_global_topography, this, std::placeholders::_1, std::placeholders::_2)
+  );
+
   RCLCPP_INFO(get_logger(), "Configuration successful.");
   return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
@@ -136,6 +171,161 @@ MainComputeNode::on_shutdown(const rclcpp_lifecycle::State &)
 
   RCLCPP_INFO(get_logger(), "Shutdown successful.");
   return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
+}
+
+void MainComputeNode::on_set_navigation(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  RCLCPP_INFO(get_logger(), "Received request to set navigation: %s", request->data ? "true" : "false");
+
+  if (request->data) {
+    if (navigation_subsystem_->get_state() == SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Navigation is already active.";
+    } else {
+      navigation_subsystem_->set_enabled(true);
+      if (navigation_subsystem_->on_activate()) {
+        response->success = true;
+        response->message = "Successfully started navigation.";
+      } else {
+        response->success = false;
+        response->message = "Failed to start navigation.";
+      }
+    }
+  } else {
+    if (navigation_subsystem_->get_state() != SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Navigation is already inactive.";
+      navigation_subsystem_->set_enabled(false);
+    } else {
+      if (navigation_subsystem_->on_deactivate()) {
+        response->success = true;
+        response->message = "Successfully stopped navigation.";
+        navigation_subsystem_->set_enabled(false);
+      } else {
+        response->success = false;
+        response->message = "Failed to stop navigation.";
+      }
+    }
+  }
+}
+
+void MainComputeNode::on_set_mapping(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  auto sub = mapping_subsystem_->get_mapping_subsystem();
+  RCLCPP_INFO(get_logger(), "Received request to set mapping: %s", request->data ? "true" : "false");
+
+  if (request->data) {
+    if (sub->get_state() == SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Mapping is already active.";
+    } else {
+      sub->set_enabled(true);
+      if (sub->on_activate()) {
+        response->success = true;
+        response->message = "Successfully started mapping.";
+      } else {
+        response->success = false;
+        response->message = "Failed to start mapping.";
+      }
+    }
+  } else {
+    if (sub->get_state() != SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Mapping is already inactive.";
+      sub->set_enabled(false);
+    } else {
+      if (sub->on_deactivate()) {
+        response->success = true;
+        response->message = "Successfully stopped mapping.";
+        sub->set_enabled(false);
+      } else {
+        response->success = false;
+        response->message = "Failed to stop mapping.";
+      }
+    }
+  }
+}
+
+void MainComputeNode::on_set_local_topography(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  auto sub = mapping_subsystem_->get_local_topography_subsystem();
+  RCLCPP_INFO(get_logger(), "Received request to set local topography: %s", request->data ? "true" : "false");
+
+  if (request->data) {
+    if (sub->get_state() == SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Local topography is already active.";
+    } else {
+      sub->set_enabled(true);
+      if (sub->on_activate()) {
+        response->success = true;
+        response->message = "Successfully started local topography.";
+      } else {
+        response->success = false;
+        response->message = "Failed to start local topography.";
+      }
+    }
+  } else {
+    if (sub->get_state() != SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Local topography is already inactive.";
+      sub->set_enabled(false);
+    } else {
+      if (sub->on_deactivate()) {
+        response->success = true;
+        response->message = "Successfully stopped local topography.";
+        sub->set_enabled(false);
+      } else {
+        response->success = false;
+        response->message = "Failed to stop local topography.";
+      }
+    }
+  }
+}
+
+void MainComputeNode::on_set_global_topography(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  auto sub = mapping_subsystem_->get_global_topography_subsystem();
+  RCLCPP_INFO(get_logger(), "Received request to set global topography: %s", request->data ? "true" : "false");
+
+  if (request->data) {
+    if (sub->get_state() == SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Global topography is already active.";
+    } else {
+      sub->set_enabled(true);
+      if (sub->on_activate()) {
+        response->success = true;
+        response->message = "Successfully started global topography.";
+      } else {
+        response->success = false;
+        response->message = "Failed to start global topography.";
+      }
+    }
+  } else {
+    if (sub->get_state() != SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Global topography is already inactive.";
+      sub->set_enabled(false);
+    } else {
+      if (sub->on_deactivate()) {
+        response->success = true;
+        response->message = "Successfully stopped global topography.";
+        sub->set_enabled(false);
+      } else {
+        response->success = false;
+        response->message = "Failed to stop global topography.";
+      }
+    }
+  }
 }
 
 RCLCPP_COMPONENTS_REGISTER_NODE(rover_autonomy::MainComputeNode)
