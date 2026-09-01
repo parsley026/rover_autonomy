@@ -2,8 +2,8 @@
 <robot name="ouster_lidar" xmlns:xacro="http://ros.org/wiki/xacro">
 
     <xacro:macro name="ouster_lidar" params="lidar_name parent_frame 
-                                               lidar_pos_x:=0.0 lidar_pos_y:=0.0 lidar_pos_z:=0.0 
-                                               lidar_roll:=0.0  lidar_pitch:=0.0 lidar_yaw:=0.0 
+                                               lidar_pos_x:=0.0 lidar_pos_y:=0.0 lidar_pos_z:=0.04 
+                                               lidar_roll:=0.0  lidar_pitch:=0.0 lidar_yaw:=3.14159265359
                                                baseline:=0.075">
         
         <xacro:property name="M_PI" value="3.1415926535897931" />
