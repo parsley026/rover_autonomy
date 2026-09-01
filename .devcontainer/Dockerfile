@@ -13,9 +13,14 @@ ENV ROS_BUILD_ON_STARTUP=on-failure
 
 ### If really needed add only unmet pkg deps here
 ### Add required ros packages here
-RUN DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
-    ros-jazzy-image-transport ros-jazzy-image-transport-plugins ros-jazzy-rmw-cyclonedds-cpp
+# ADDED: nodejs and npm to the end of this list
     
+RUN DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive apt install -y \
+    ros-jazzy-image-transport ros-jazzy-image-transport-plugins ros-jazzy-rmw-cyclonedds-cpp \
+    ros-jazzy-rosbridge-suite nodejs npm xrdp tint2
+
+RUN echo "openbox-session && tint2" > /etc/xrdp/startwm.sh
+
 # Create user
 # RUN useradd -m -s /bin/bash -g 1000 ${USERNAME}
 # RUN echo "${USERNAME}:${PASSWORD}" | chpasswd
@@ -42,6 +47,9 @@ RUN rm -rf /home/${USERNAME}/raptor_ws/build
 RUN rm -rf /home/${USERNAME}/raptor_ws/log
 RUN rm -rf /home/${USERNAME}/raptor_ws/install
 
+# ADDED: Install the dashboard dependencies right after copying the files
+RUN cd /home/${USERNAME}/raptor_ws/autonomy_dashboard && npm install
+
 # Fix github 'unsafe' directory
 RUN git config --global --add safe.directory /home/rex/raptor_ws
 RUN git config --global --add safe.directory /home/rex/raptor_ws/src/rex_interfaces
@@ -53,14 +61,9 @@ RUN git submodule update --init --recursive || true
 # Build the workspace
 RUN bash -c "source /opt/ros/jazzy/setup.bash && colcon build --symlink-install --cmake-args -DCMAKE_BUILD_TYPE=Release --event-handlers console_start_end+ console_direct+ --executor parallel"
 
-# Manage public ssh keys
+# Prepare .ssh directory for public keys
 RUN rm -rf /home/${USERNAME}/.ssh
 RUN mkdir -m 0700 /home/${USERNAME}/.ssh
-RUN touch /home/${USERNAME}/.ssh/authorized_keys
-RUN chmod 640 /home/${USERNAME}/.ssh/authorized_keys
-ADD --chown=${USERNAME}:${USERNAME} ./.devcontainer/public_keys.d /home/${USERNAME}/.ssh/public_keys.d
-RUN cat /home/${USERNAME}/.ssh/public_keys.d/*.pub >> /home/${USERNAME}/.ssh/authorized_keys || true
-RUN rm -rf /home/${USERNAME}/.ssh/public_keys.d
 
 USER root
 COPY .devcontainer/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh

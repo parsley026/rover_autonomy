@@ -14,6 +14,8 @@ services:
     ipc: "host"
     init: true
     network_mode: host
+    extra_hosts:
+      - "ros-autonomy=127.0.0.1"
     privileged: true
     devices:
       - /dev/kfd:/dev/kfd
@@ -42,15 +44,18 @@ services:
         source: ./
         target: /mnt/local
         bind:
-          create_host_path: true
+          create_host_path: false
       - type: bind
         source: ./.devcontainer/rex
         target: /etc/init.d/rex
         bind:
-          create_host_path: true
+          create_host_path: false
       - type: bind
-        source: /dev/shm
-        target: /dev/shm
+        source: "${REX_CONTAINER_AUTHORIZED_KEYS:-/dev/null}"
+        target: /run/secrets/authorized_keys
+        read_only: true # Make sure this stays read-only!
+        bind:
+          create_host_path: false
 
       - ./src:/home/rex/raptor_ws/src
 

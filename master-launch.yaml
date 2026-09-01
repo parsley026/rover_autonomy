@@ -23,4 +23,7 @@ launch:
 #         value: "/CAN/TX/raw"
 
   - include:
+      file: "$(find-pkg-share rosbridge_server)/launch/rosbridge_websocket_launch.xml"
+  
+  - include:
       file: "/home/rex/raptor_ws/autonomy_dashboard/dashboard.launch.xml"
