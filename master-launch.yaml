@@ -21,3 +21,6 @@ launch:
 #       -
 #         name: "to_can_bus_topic"
 #         value: "/CAN/TX/raw"
+
+  - include:
+      file: "/home/rex/raptor_ws/autonomy_dashboard/dashboard.launch.xml"
