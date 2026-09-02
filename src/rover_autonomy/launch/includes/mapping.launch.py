@@ -1,7 +1,7 @@
 import os
 from datetime import datetime
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, SetEnvironmentVariable
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
@@ -182,7 +182,13 @@ def launch_setup(context, *args, **kwargs):
             output='screen',
             parameters=rtabmap_parameters,
             remappings=slam_remappings,
-            arguments=slam_arguments
+            arguments=slam_arguments,
+            additional_env={
+        'OMP_NUM_THREADS': '8',
+        'OPENBLAS_NUM_THREADS': '8',
+        'MKL_NUM_THREADS': '8',
+        'OpenCV_NUM_THREADS': '8'
+    }
         ),
     ]
 
@@ -191,6 +197,7 @@ def generate_launch_description():
     default_params_file = PathJoinSubstitution([pkg_share, 'config', 'mapping', 'mapping.yaml'])
 
     return LaunchDescription([
+        SetEnvironmentVariable('OMP_NUM_THREADS', '4'),
         DeclareLaunchArgument('params_file', default_value=default_params_file, description=''),
 
         DeclareLaunchArgument('use_sim_time',      default_value='false',        description=''),
