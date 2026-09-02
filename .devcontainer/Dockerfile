@@ -19,7 +19,14 @@ RUN DEBIAN_FRONTEND=noninteractive apt update && DEBIAN_FRONTEND=noninteractive 
     ros-jazzy-image-transport ros-jazzy-image-transport-plugins ros-jazzy-rmw-cyclonedds-cpp \
     ros-jazzy-rosbridge-suite nodejs npm xrdp tint2
 
-RUN echo "openbox-session && tint2" > /etc/xrdp/startwm.sh
+RUN <<'EOF' cat > /etc/xrdp/startwm.sh
+#!/bin/sh
+
+tint2 &
+exec openbox-session
+EOF
+
+RUN chmod +x /etc/xrdp/startwm.sh
 
 # Create user
 # RUN useradd -m -s /bin/bash -g 1000 ${USERNAME}

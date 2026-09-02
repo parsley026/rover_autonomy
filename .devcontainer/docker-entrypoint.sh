@@ -55,6 +55,7 @@ fi
 
 echo "--------------------------------------------------------------------"
 
+service xrdp stop 2>/dev/null || true # stop xrdp if it was running
 if service xrdp start; then
     echo "XRDP service started successfully."
 else
