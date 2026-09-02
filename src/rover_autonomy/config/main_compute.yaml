@@ -16,8 +16,8 @@ main_compute:
     launch_localization: true
 
     launch_mapping: true
-    launch_local_topography: false
-    launch_global_topography: false
+    launch_local_topography: true
+    launch_global_topography: true
     
     launch_navigation: false
 
@@ -37,7 +37,7 @@ main_compute:
     camera_00_name:         "camera_00"
     camera_00_parent_frame: "sensor_mount_01_link"
 
-    camera_00_decompress_rgb: true
+    camera_00_decompress_rgb: false
     camera_00_decompress_depth: false
 
     # -- camera 01 subsystem identifiers
@@ -103,11 +103,11 @@ main_compute:
 
     local_topography_package: "rover_topography"
     local_topography_launch:  "local_topography.launch.py"
-    local_topography_ns:      ""
+    local_topography_ns:      "local_topography"
     
     global_topography_package: "rover_topography"
     global_topography_launch:  "global_topography.launch.py"
-    global_topography_ns:      ""
+    global_topography_ns:      "global_topography"
 
     mapping_load_existing_db: false
     

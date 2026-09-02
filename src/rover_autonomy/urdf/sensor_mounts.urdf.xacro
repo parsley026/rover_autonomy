@@ -49,12 +49,44 @@
     </visual>
   </link>
   
-  <joint name="module_base_mount_joint" type="fixed">
+  <!-- =============================== -->
+  <!-- CHANGE HERE FOR AUTONOMY MODULE -->
+  <!-- =============================== -->
+
+  <!-- <joint name="module_base_mount_joint" type="fixed">
     <parent link="robot_base_front_mount"/>
     <child link="module_base_mount"/>
     <origin xyz="0.015 0.0 0.02" rpy="0 0 0"/>
+  </joint> -->
+
+  <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
+
+  <link name="robot_base_back_mount">
+    <visual>
+      <geometry>
+        <box size="0.12 0.15 0.02"/>
+      </geometry>
+      <material name="dark_gray">
+        <color rgba="0.3 0.3 0.3 1.0"/>
+      </material>
+    </visual>
+  </link>
+  
+  <joint name="robot_base_back_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="robot_base_back_mount"/>
+    <origin xyz="-0.38 0.0 0.025" rpy="0 0 0"/>
   </joint>
 
+  <joint name="module_base_mount_joint" type="fixed">
+    <parent link="robot_base_back_mount"/>
+    <child link="module_base_mount"/>
+    <origin xyz="0.00 0.0 0.02" rpy="0 0 3.14159265"/>
+  </joint>
+
+  <!-- =============================== -->
+  <!--                                 -->
+  <!-- =============================== -->
 
   <link name="module_base">
     <visual>

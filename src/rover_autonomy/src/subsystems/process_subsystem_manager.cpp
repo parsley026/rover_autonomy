@@ -110,6 +110,12 @@ bool ProcessSubsystemManager::start_process()
     args.push_back(launch_file_);
 
     for (const auto& kv : launch_arguments_) {
+      if (kv.second.empty()) {
+        RCLCPP_WARN(parent_node_->get_logger(),
+          "Skipping empty launch argument '%s' for subsystem %s.",
+          kv.first.c_str(), launch_file_.c_str());
+        continue;
+      }
       args.push_back(kv.first + ":=" + kv.second);
     }
 
