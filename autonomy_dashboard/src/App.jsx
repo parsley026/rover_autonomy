@@ -19,10 +19,10 @@ function resolveRosbridgeUrl() {
 
   if (typeof window !== 'undefined') {
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    return `${protocol}//${window.location.hostname}:9090`;
+    return `${protocol}//${window.location.host}/rosbridge`;
   }
 
-  return 'ws://localhost:9090';
+  return 'ws://localhost:5173/rosbridge';
 }
 
 function DashboardHome() {
