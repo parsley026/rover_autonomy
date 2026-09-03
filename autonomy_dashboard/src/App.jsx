@@ -9,6 +9,7 @@ import MapPage from './pages/MapPage';
 import NavigationPage from './pages/NavigationPage';
 import LocalizationPage from './pages/LocalizationPage';
 import RecoveryPage from './pages/RecoveryPage';
+import PipelinePage from './pages/PipelinePage';
 import './index.css';
 
 function resolveRosbridgeUrl() {
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="/map" element={<MapPage />} />
             <Route path="/navigation" element={<NavigationPage />} />
             <Route path="/localization" element={<LocalizationPage />} />
+            <Route path="/pipeline" element={<PipelinePage />} />
             <Route path="/recovery" element={<RecoveryPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

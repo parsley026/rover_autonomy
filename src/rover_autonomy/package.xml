@@ -30,6 +30,9 @@
   <depend>geometry_msgs</depend>
   <depend>diagnostic_msgs</depend>
   <depend>tf2</depend>
+  <depend>nav2_bt_navigator</depend>
+  <depend>navigation2</depend>
+  <depend>nav2_bringup</depend>
 
   <!-- Python launch support -->
   <exec_depend>launch</exec_depend>
