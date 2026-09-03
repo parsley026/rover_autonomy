@@ -17,7 +17,7 @@
     queue_size_odom: 200
     wait_for_transform: 0.1       # <-- Gives TF tree time to provide base_link -> lidar
 
-    Odom/ResetCountdown: "1"
+    Odom/ResetCountdown: "0"
     
     Icp/PointToPlane: "false" 
     Icp/PointToPlaneK: "0"

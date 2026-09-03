@@ -31,8 +31,8 @@
     point_type: original
 
     # 360
-    azimuth_window_start: 0
-    azimuth_window_end: 360000
+    # azimuth_window_start: 0
+    # azimuth_window_end: 360000
 
     # 270
     # azimuth_window_start: 45000
@@ -43,8 +43,8 @@
     # azimuth_window_end: 270000
 
     # 150
-    # azimuth_window_start: 105000
-    # azimuth_window_end: 255000
+    azimuth_window_start: 105000
+    azimuth_window_end: 255000
     
     # 120
     # azimuth_window_start: 120000

@@ -21,6 +21,8 @@ void ParameterManager::declare_all_parameters()
 
   // --- Subsystem activation toggles ---
   node_->declare_parameter<bool>("launch_description",    true);
+  node_->declare_parameter<bool>("module_position_front", true);
+  node_->declare_parameter<bool>("module_position_back",  false);
   node_->declare_parameter<bool>("launch_camera_00",      true);
   node_->declare_parameter<bool>("launch_camera_00_driver",          true);
   node_->declare_parameter<bool>("launch_camera_00_decompression",   true);
@@ -122,6 +124,7 @@ void ParameterManager::declare_all_parameters()
   node_->declare_parameter<std::string>("navigation_package",      "rover_autonomy");
   node_->declare_parameter<std::string>("navigation_launch",       "navigation.launch.py");
   node_->declare_parameter<std::string>("navigation_ns",           "navigation");
+  node_->declare_parameter<int>("navigation_mode",                 110);
   node_->declare_parameter<bool>("navigation_autostart",           true);
   node_->declare_parameter<bool>("navigation_use_composition",     true);
 
@@ -356,6 +359,11 @@ SubsystemConfig ParameterManager::get_navigation_config() const
 
   config.launch_args["params_file"] =
     resolve_share_path("rover_autonomy", node_->get_parameter("navigation_config").as_string());
+    
+  config.launch_args["navigation_mode"] = std::to_string(node_->get_parameter("navigation_mode").as_int());
+  config.launch_args["launch_mapping"] = node_->get_parameter("launch_mapping").as_bool() ? "true" : "false";
+  config.launch_args["launch_local_topography"] = node_->get_parameter("launch_local_topography").as_bool() ? "true" : "false";
+  config.launch_args["launch_global_topography"] = node_->get_parameter("launch_global_topography").as_bool() ? "true" : "false";
 
   return config;
 }
@@ -369,6 +377,11 @@ SubsystemConfig ParameterManager::get_description_config() const
 
   bool use_sim_time = node_->get_parameter("use_sim_time").as_bool();
   config.launch_args["use_sim_time"] = use_sim_time ? "true" : "false";
+
+  bool pos_front = node_->get_parameter("module_position_front").as_bool();
+  bool pos_back  = node_->get_parameter("module_position_back").as_bool();
+  config.launch_args["module_position_front"] = pos_front ? "true" : "false";
+  config.launch_args["module_position_back"]  = pos_back ? "true" : "false";
 
   return config;
 }
@@ -404,7 +417,9 @@ rcl_interfaces::msg::SetParametersResult ParameterManager::on_parameters_updated
     if (name == "use_sim_time" ||
         name == "launch_description" ||
         name == "description_package" ||
-        name == "description_launch")
+        name == "description_launch" ||
+        name == "module_position_front" ||
+        name == "module_position_back")
     {
       changed_subsystems.insert("description");
     }

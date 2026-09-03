@@ -27,7 +27,10 @@ def launch_setup(context, *args, **kwargs):
                     'urdf',
                     urdf_file
                 ]),
-                '"',
+                '" module_position_front:=',
+                LaunchConfiguration('module_position_front'),
+                ' module_position_back:=',
+                LaunchConfiguration('module_position_back'),
             ]),
             value_type=str
         )
@@ -66,6 +69,8 @@ def generate_launch_description():
         DeclareLaunchArgument('urdf_file',    default_value='sensor_mounts.urdf.xacro'),
 
         DeclareLaunchArgument('description_ns',   default_value='autonomy_submodule', description=''),
+        DeclareLaunchArgument('module_position_front',  default_value='true', description='Mount module in front'),
+        DeclareLaunchArgument('module_position_back',   default_value='false', description='Mount module in back'),
 
         DeclareLaunchArgument('use_sim_time', default_value='false', description=''),
         OpaqueFunction(function=launch_setup)

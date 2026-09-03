@@ -14,14 +14,11 @@
     approx_sync: true
     approx_sync_max_interval: 0.01
     
-    Odom/ResetCountdown: "1"
+    Odom/ResetCountdown: "0"
 
     approx_sync: true
     publish_null_when_lost: false
     wait_imu_to_init: false
-    queue_size_odom: 200
-    wait_for_transform: 0.1  
-
     queue_size_odom: 200
     wait_for_transform: 0.1  
 

@@ -53,11 +53,17 @@
   <!-- CHANGE HERE FOR AUTONOMY MODULE -->
   <!-- =============================== -->
 
-  <!-- <joint name="module_base_mount_joint" type="fixed">
-    <parent link="robot_base_front_mount"/>
-    <child link="module_base_mount"/>
-    <origin xyz="0.015 0.0 0.02" rpy="0 0 0"/>
-  </joint> -->
+  <xacro:arg name="module_position_front" default="true"/>
+  <xacro:arg name="module_position_back" default="false"/>
+
+  <!-- FRONT MOUNT -->
+  <xacro:if value="${'$(arg module_position_front)' == 'true'}">
+    <joint name="module_base_mount_joint" type="fixed">
+      <parent link="robot_base_front_mount"/>
+      <child link="module_base_mount"/>
+      <origin xyz="0.015 0.0 0.02" rpy="0 0 0"/>
+    </joint>
+  </xacro:if>
 
   <!-- xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx -->
 
@@ -78,11 +84,14 @@
     <origin xyz="-0.38 0.0 0.025" rpy="0 0 0"/>
   </joint>
 
-  <joint name="module_base_mount_joint" type="fixed">
-    <parent link="robot_base_back_mount"/>
-    <child link="module_base_mount"/>
-    <origin xyz="0.00 0.0 0.02" rpy="0 0 3.14159265"/>
-  </joint>
+  <!-- BACK MOUNT -->
+  <xacro:if value="${'$(arg module_position_back)' == 'true'}">
+    <joint name="module_base_mount_joint" type="fixed">
+      <parent link="robot_base_back_mount"/>
+      <child link="module_base_mount"/>
+      <origin xyz="0.00 0.0 0.02" rpy="0 0 3.14159265"/>
+    </joint>
+  </xacro:if>
 
   <!-- =============================== -->
   <!--                                 -->
@@ -238,6 +247,25 @@
     <parent link="sensor_mount_02_link"/>
     <child link="cross_center_plate_link"/>
     <origin xyz="-0.03 0.0 0.0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ======= MAST SENSORS ======= -->
+
+  <link name="sensor_mount_03_link">
+    <visual>
+      <geometry>
+        <box size="0.02 0.04 0.035"/>
+      </geometry>
+      <material name="green">
+        <color rgba="0.0 1.0 0.0 0.75"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="sensor_mount_03_joint" type="fixed">
+    <parent link="pole_right_link"/>
+    <child link="sensor_mount_03_link"/>
+    <origin xyz="0.0 0.0 0.10" rpy="0 0 0"/>
   </joint>
 
 </robot>
