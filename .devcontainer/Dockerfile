@@ -1,4 +1,4 @@
-FROM wisniax/ros-rover-base:autonomy-rocm-latest
+FROM alvarobajceps/ros-rover-base:autonomy-rocm-beta
 
 USER root
 
