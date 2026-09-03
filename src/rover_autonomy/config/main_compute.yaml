@@ -111,7 +111,7 @@ main_compute:
 
     mapping_load_existing_db: false
     
-    mapping_db_folder:    "~/.ros/rtabmap"
+    mapping_db_folder:    "/home/rex/raptor_ws/map/"
     mapping_db_file_name: "rtabmap.db"
 
     navigation_package:      "rover_autonomy"
