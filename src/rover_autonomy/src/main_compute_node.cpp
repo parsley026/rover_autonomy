@@ -113,6 +113,26 @@ MainComputeNode::on_configure(const rclcpp_lifecycle::State &)
     std::bind(&MainComputeNode::on_set_global_topography, this, std::placeholders::_1, std::placeholders::_2)
   );
 
+  camera_service_ = this->create_service<std_srvs::srv::SetBool>(
+    "~/set_camera",
+    std::bind(&MainComputeNode::on_set_camera, this, std::placeholders::_1, std::placeholders::_2)
+  );
+
+  lidar_service_ = this->create_service<std_srvs::srv::SetBool>(
+    "~/set_lidar",
+    std::bind(&MainComputeNode::on_set_lidar, this, std::placeholders::_1, std::placeholders::_2)
+  );
+
+  odometry_service_ = this->create_service<std_srvs::srv::SetBool>(
+    "~/set_odometry",
+    std::bind(&MainComputeNode::on_set_odometry, this, std::placeholders::_1, std::placeholders::_2)
+  );
+
+  description_service_ = this->create_service<std_srvs::srv::SetBool>(
+    "~/set_description",
+    std::bind(&MainComputeNode::on_set_description, this, std::placeholders::_1, std::placeholders::_2)
+  );
+
   RCLCPP_INFO(get_logger(), "Configuration successful.");
   return rclcpp_lifecycle::node_interfaces::LifecycleNodeInterface::CallbackReturn::SUCCESS;
 }
@@ -323,6 +343,162 @@ void MainComputeNode::on_set_global_topography(
       } else {
         response->success = false;
         response->message = "Failed to stop global topography.";
+      }
+    }
+  }
+}
+
+void MainComputeNode::on_set_camera(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  auto sub = camera_subsystem_.get();
+  RCLCPP_INFO(get_logger(), "Received request to set camera: %s", request->data ? "true" : "false");
+
+  if (request->data) {
+    if (sub->get_state() == SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Camera subsystem is already active.";
+    } else {
+      sub->set_enabled(true);
+      if (sub->on_activate()) {
+        response->success = true;
+        response->message = "Successfully started camera subsystem.";
+      } else {
+        response->success = false;
+        response->message = "Failed to start camera subsystem.";
+      }
+    }
+  } else {
+    if (sub->get_state() != SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Camera subsystem is already inactive.";
+      sub->set_enabled(false);
+    } else {
+      if (sub->on_deactivate()) {
+        response->success = true;
+        response->message = "Successfully stopped camera subsystem.";
+        sub->set_enabled(false);
+      } else {
+        response->success = false;
+        response->message = "Failed to stop camera subsystem.";
+      }
+    }
+  }
+}
+
+void MainComputeNode::on_set_lidar(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  auto sub = lidar_subsystem_.get();
+  RCLCPP_INFO(get_logger(), "Received request to set lidar: %s", request->data ? "true" : "false");
+
+  if (request->data) {
+    if (sub->get_state() == SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Lidar subsystem is already active.";
+    } else {
+      sub->set_enabled(true);
+      if (sub->on_activate()) {
+        response->success = true;
+        response->message = "Successfully started lidar subsystem.";
+      } else {
+        response->success = false;
+        response->message = "Failed to start lidar subsystem.";
+      }
+    }
+  } else {
+    if (sub->get_state() != SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Lidar subsystem is already inactive.";
+      sub->set_enabled(false);
+    } else {
+      if (sub->on_deactivate()) {
+        response->success = true;
+        response->message = "Successfully stopped lidar subsystem.";
+        sub->set_enabled(false);
+      } else {
+        response->success = false;
+        response->message = "Failed to stop lidar subsystem.";
+      }
+    }
+  }
+}
+
+void MainComputeNode::on_set_odometry(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  auto sub = odometry_subsystem_.get();
+  RCLCPP_INFO(get_logger(), "Received request to set odometry: %s", request->data ? "true" : "false");
+
+  if (request->data) {
+    if (sub->get_state() == SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Odometry subsystem is already active.";
+    } else {
+      sub->set_enabled(true);
+      if (sub->on_activate()) {
+        response->success = true;
+        response->message = "Successfully started odometry subsystem.";
+      } else {
+        response->success = false;
+        response->message = "Failed to start odometry subsystem.";
+      }
+    }
+  } else {
+    if (sub->get_state() != SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Odometry subsystem is already inactive.";
+      sub->set_enabled(false);
+    } else {
+      if (sub->on_deactivate()) {
+        response->success = true;
+        response->message = "Successfully stopped odometry subsystem.";
+        sub->set_enabled(false);
+      } else {
+        response->success = false;
+        response->message = "Failed to stop odometry subsystem.";
+      }
+    }
+  }
+}
+
+void MainComputeNode::on_set_description(
+  const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+  std::shared_ptr<std_srvs::srv::SetBool::Response> response)
+{
+  auto sub = description_subsystem_.get();
+  RCLCPP_INFO(get_logger(), "Received request to set description: %s", request->data ? "true" : "false");
+
+  if (request->data) {
+    if (sub->get_state() == SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Description subsystem is already active.";
+    } else {
+      sub->set_enabled(true);
+      if (sub->on_activate()) {
+        response->success = true;
+        response->message = "Successfully started description subsystem.";
+      } else {
+        response->success = false;
+        response->message = "Failed to start description subsystem.";
+      }
+    }
+  } else {
+    if (sub->get_state() != SubsystemState::ACTIVE) {
+      response->success = true;
+      response->message = "Description subsystem is already inactive.";
+      sub->set_enabled(false);
+    } else {
+      if (sub->on_deactivate()) {
+        response->success = true;
+        response->message = "Successfully stopped description subsystem.";
+        sub->set_enabled(false);
+      } else {
+        response->success = false;
+        response->message = "Failed to stop description subsystem.";
       }
     }
   }

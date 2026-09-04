@@ -78,6 +78,27 @@ private:
     const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
     std::shared_ptr<std_srvs::srv::SetBool::Response> response);
 
+  // Additional pipeline services
+  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr camera_service_;
+  void on_set_camera(
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    std::shared_ptr<std_srvs::srv::SetBool::Response> response);
+
+  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr lidar_service_;
+  void on_set_lidar(
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    std::shared_ptr<std_srvs::srv::SetBool::Response> response);
+
+  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr odometry_service_;
+  void on_set_odometry(
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    std::shared_ptr<std_srvs::srv::SetBool::Response> response);
+
+  rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr description_service_;
+  void on_set_description(
+    const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
+    std::shared_ptr<std_srvs::srv::SetBool::Response> response);
+
   // Recovery callback fired by ParameterManager when a config param changes at runtime
   void on_subsystem_config_changed(const std::string & subsystem_name);
 };

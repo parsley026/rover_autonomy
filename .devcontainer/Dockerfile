@@ -29,9 +29,9 @@ EOF
 RUN chmod +x /etc/xrdp/startwm.sh
 
 # Create user
-# RUN useradd -m -s /bin/bash -g 1000 ${USERNAME}
-# RUN echo "${USERNAME}:${PASSWORD}" | chpasswd
-# RUN usermod -aG sudo ${USERNAME}
+RUN useradd -m -s /bin/bash -g 1000 ${USERNAME}
+RUN echo "${USERNAME}:${PASSWORD}" | chpasswd
+RUN usermod -aG sudo ${USERNAME}
 
 # Change ssh port and expose it
 RUN sed -i "/^#\?Port/ { s/^#//; s/Port .*/Port ${SSH_PORT}/; }" /etc/ssh/sshd_config

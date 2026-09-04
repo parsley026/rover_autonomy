@@ -43,12 +43,12 @@
     # azimuth_window_end: 270000
 
     # 150
-    azimuth_window_start: 105000
-    azimuth_window_end: 255000
+    # azimuth_window_start: 105000
+    # azimuth_window_end: 255000
     
     # 120
-    # azimuth_window_start: 120000
-    # azimuth_window_end: 240000
+    azimuth_window_start: 120000
+    azimuth_window_end: 240000
     
     # 90
     # azimuth_window_start: 135000

@@ -107,7 +107,7 @@ main_compute:
     mapping_db_file_name: "rtabmap.db"
 
     # navigation
-    launch_navigation: false
+    launch_navigation: true
     navigation_package:      "rover_autonomy"
     navigation_launch:       "navigation.launch.py"
     navigation_ns:           "navigation"
