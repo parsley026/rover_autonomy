@@ -1,12 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { useRos } from '../context/RosContext';
 import * as ROSLIB from 'roslib';
-import { Info, ChevronDown, Power, Layers, Navigation, Map } from 'lucide-react';
+import { Info, ChevronDown, Power, Layers, Navigation, Map, Camera, Scan, Activity, FileText } from 'lucide-react';
 import './MapPage.css';
 
 // ── Shared helpers ──────────────────────────────────────────────────────────
 
-const CollapsibleCategory = ({ title, subtitle, children }) => {
+const CollapsibleCategory = ({ title, subtitle, headerRight, children }) => {
   const [isOpen, setIsOpen] = useState(true);
 
   return (
@@ -16,13 +16,35 @@ const CollapsibleCategory = ({ title, subtitle, children }) => {
           <h2 className="accordion-title">{title}</h2>
           <p className="accordion-subtitle">{subtitle}</p>
         </div>
-        <ChevronDown size={24} className={`accordion-icon ${isOpen ? 'open' : ''}`} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          {headerRight && (
+            <div onClick={(e) => e.stopPropagation()}>
+              {headerRight}
+            </div>
+          )}
+          <ChevronDown size={24} className={`accordion-icon ${isOpen ? 'open' : ''}`} />
+        </div>
       </div>
       {isOpen && (
         <div className="accordion-content">
           {children}
         </div>
       )}
+    </div>
+  );
+};
+
+const BitConfig = ({ label, initialValue }) => {
+  const [val, setVal] = useState(initialValue);
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', background: 'rgba(255,255,255,0.05)', padding: '4px 8px', borderRadius: '4px' }}>
+      <span style={{ fontSize: '0.8rem', color: '#a3a3a3' }}>{label}:</span>
+      <input 
+        type="text" 
+        value={val} 
+        onChange={e => setVal(e.target.value)}
+        style={{ width: '40px', background: 'transparent', border: '1px solid #444', color: '#00f2fe', textAlign: 'center', borderRadius: '4px', fontSize: '0.8rem' }}
+      />
     </div>
   );
 };
@@ -147,8 +169,23 @@ export default function PipelinePage() {
         </div>
 
         <CollapsibleCategory
+          title="Navigation"
+          subtitle="Nav2 stack — path planning, controller, and costmaps"
+        >
+          <ToggleRow
+            title="Navigation"
+            serviceName="/main_compute/set_navigation"
+            icon={Navigation}
+            desc="Starts or stops the full Nav2 navigation stack. When enabled, the rover can plan paths and autonomously drive to goal poses using BT Navigator, local/global planners, and costmaps."
+            behavior="Enable when you want the rover to move autonomously. Disable to regain full manual control or to save resources during mapping-only sessions."
+            onHover={setActiveInfo}
+          />
+        </CollapsibleCategory>
+
+        <CollapsibleCategory
           title="Mapping"
           subtitle="SLAM / RTAB-Map — build and maintain the environment map"
+          headerRight={<BitConfig label="Mode" initialValue="110" />}
         >
           <ToggleRow
             title="Mapping"
@@ -177,15 +214,84 @@ export default function PipelinePage() {
         </CollapsibleCategory>
 
         <CollapsibleCategory
-          title="Navigation"
-          subtitle="Nav2 stack — path planning, controller, and costmaps"
+          title="Localization"
+          subtitle="Odometry sources and localization estimation"
+          headerRight={<BitConfig label="Mode" initialValue="110" />}
         >
           <ToggleRow
-            title="Navigation"
-            serviceName="/main_compute/set_navigation"
-            icon={Navigation}
-            desc="Starts or stops the full Nav2 navigation stack. When enabled, the rover can plan paths and autonomously drive to goal poses using BT Navigator, local/global planners, and costmaps."
-            behavior="Enable when you want the rover to move autonomously. Disable to regain full manual control or to save resources during mapping-only sessions."
+            title="Odom from Camera 00"
+            serviceName="/main_compute/set_odom_camera_00"
+            icon={Activity}
+            desc="Starts or stops visual odometry estimation from Camera 00."
+            behavior="Enable for local pose estimation when Camera 00 is active."
+            onHover={setActiveInfo}
+          />
+          <ToggleRow
+            title="Odom from Camera 01"
+            serviceName="/main_compute/set_odom_camera_01"
+            icon={Activity}
+            desc="Starts or stops visual odometry estimation from Camera 01."
+            behavior="Enable for local pose estimation when Camera 01 is active."
+            onHover={setActiveInfo}
+          />
+          <ToggleRow
+            title="Odom from LiDAR 00"
+            serviceName="/main_compute/set_odom_lidar_00"
+            icon={Activity}
+            desc="Starts or stops LiDAR odometry estimation from LiDAR 00."
+            behavior="Enable for local pose estimation when LiDAR 00 is active."
+            onHover={setActiveInfo}
+          />
+          <ToggleRow
+            title="Localization"
+            serviceName="/main_compute/set_localization"
+            icon={Map}
+            desc="Starts or stops the main localization fusion node (e.g., EKF or AMCL)."
+            behavior="Enable to fuse odometry sources into a single reliable pose estimate."
+            onHover={setActiveInfo}
+          />
+        </CollapsibleCategory>
+
+        <CollapsibleCategory
+          title="Sensors"
+          subtitle="Hardware drivers — control data acquisition from sensors"
+        >
+          <ToggleRow
+            title="Camera 00"
+            serviceName="/main_compute/set_camera_00"
+            icon={Camera}
+            desc="Starts or stops the primary RGB-D camera driver node."
+            behavior="Enable when you need visual feedback or point cloud data for mapping and obstacle avoidance."
+            onHover={setActiveInfo}
+          />
+          <ToggleRow
+            title="Camera 01 (Placeholder)"
+            serviceName="/main_compute/set_camera_01"
+            icon={Camera}
+            desc="Placeholder for secondary RGB-D camera driver node."
+            behavior="Currently a placeholder. Will be used for extended FOV."
+            onHover={setActiveInfo}
+          />
+          <ToggleRow
+            title="LiDAR 00"
+            serviceName="/main_compute/set_lidar_00"
+            icon={Scan}
+            desc="Starts or stops the primary 2D/3D LiDAR driver node."
+            behavior="Enable for mapping and precise obstacle detection."
+            onHover={setActiveInfo}
+          />
+        </CollapsibleCategory>
+
+        <CollapsibleCategory
+          title="Description"
+          subtitle="Robot physical model and transforms"
+        >
+          <ToggleRow
+            title="Description"
+            serviceName="/main_compute/set_description"
+            icon={FileText}
+            desc="Starts or stops the robot state publisher. When enabled, broadcasts the rover's TF tree and URDF model."
+            behavior="Enable for visualizing the rover in RViz and for accurate sensor transforms. Rarely disabled during normal operation."
             onHover={setActiveInfo}
           />
         </CollapsibleCategory>
